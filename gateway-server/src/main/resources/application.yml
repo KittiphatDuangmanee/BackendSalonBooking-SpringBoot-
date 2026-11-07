@@ -1,0 +1,87 @@
+# server port
+server:
+  port: 5000
+
+# eureka configuration
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: "http://localhost:8070/eureka/"
+
+# service name
+spring:
+  application:
+    name: gateway-server
+
+  security:
+    oauth2:
+      resource server:
+        jwt:
+          jwk-set-uri: "http://localhost:8080/realms/master/protocol/openid-connect/certs"
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+          routes:
+            - id: BOOKING-SERVICE
+              uri: lb://BOOKING-SERVICE
+              predicates:
+                - Path=/api/bookings,/api/bookings/**
+
+            - id: PAYMENT-SERVICE
+              uri: lb://PAYMENT-SERVICE
+              predicates:
+                - Path=/api/payments,/api/payments/**
+
+            - id: CATEGORY-SERVICE
+              uri: lb://CATEGORY-SERVICE
+              predicates:
+                - Path=/api/categories,/api/categories/**
+
+            - id: SALON-SERVICE
+              uri: lb://SALON-SERVICE
+              predicates:
+                - Path=/salons,/salons/**,/api/salons,/api/salons/**,/api/admin/salons,/api/admin/salons/**
+
+            - id: OFFERING-SERVICE
+              uri: lb://OFFERING-SERVICE
+              predicates:
+                - Path=/api/service-offering,/api/service-offering/**
+
+            - id: USER-SERVICE
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/auth/**,/api/admin/users/**,/api/users/**,/users/**
+
+            - id: NOTIFICATION-SERVICE
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/notifications/**
+
+            - id: REVIEW-SERVICE
+              uri: lb://REVIEW-SERVICE
+              predicates:
+                - Path=/api/reviews/**
+
+
+# Log Match Route Gateway
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.web.reactive: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
