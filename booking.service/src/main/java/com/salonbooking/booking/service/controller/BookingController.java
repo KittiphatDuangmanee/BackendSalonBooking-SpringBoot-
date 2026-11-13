@@ -120,7 +120,7 @@ public class BookingController {
         return ResponseEntity.ok(BookingMapper.toBookingDTO(booking, serviceOfferingDTOSet, customer, salon));
     }
 
-    @PutMapping("/{bookingId}")
+    @PutMapping("/{bookingId}/status")
     public ResponseEntity<BookingDTO> updateBookingStatus(
             @PathVariable Long bookingId,
             @RequestParam BookingStatus bookingStatus
